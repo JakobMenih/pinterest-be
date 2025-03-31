@@ -1,0 +1,31 @@
+{
+  "name": "pinterest-be",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start:dev": "nest start --watch"
+  },
+  "dependencies": {
+    "@nestjs/config": "^4.0.2",
+    "@nestjs/jwt": "^11.0.0",
+    "@nestjs/passport": "^11.0.5",
+    "@nestjs/platform-express": "^11.0.12",
+    "@nestjs/typeorm": "^11.0.0",
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.7",
+    "multer": "^1.4.5-lts.2",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
+    "pg": "^8.14.1",
+    "typeorm": "^0.3.21"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/multer": "^1.4.12",
+    "@types/passport-jwt": "^4.0.1",
+    "typescript": "^5.8.2"
+  },
+  "private": true
+}
