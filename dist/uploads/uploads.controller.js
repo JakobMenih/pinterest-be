@@ -34,12 +34,17 @@ let UploadsController = class UploadsController {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
             const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
+            const title = req.body.title;
             if (!userId) {
                 throw new Error('User ID not found in token');
             }
+            if (!title) {
+                throw new Error('Title is required for upload');
+            }
             console.log('File uploaded:', file);
             console.log('User ID:', userId);
-            const upload = yield this.uploadsService.create({
+            yield this.uploadsService.create({
+                title,
                 filename: file.filename,
                 mimetype: file.mimetype,
                 size: file.size,
@@ -47,6 +52,7 @@ let UploadsController = class UploadsController {
             });
             return {
                 message: 'File uploaded successfully!',
+                title,
                 filename: file.filename,
                 mimetype: file.mimetype,
                 size: file.size,
@@ -67,6 +73,21 @@ let UploadsController = class UploadsController {
     getUploadsByUser(userId) {
         return __awaiter(this, void 0, void 0, function* () {
             return this.uploadsService.findByUser(userId);
+        });
+    }
+    updateUpload(file, req, id, updateData) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (file) {
+                updateData.filename = file.filename;
+                updateData.mimetype = file.mimetype;
+                updateData.size = file.size;
+            }
+            return this.uploadsService.updateUpload(id, updateData, req.user.userId);
+        });
+    }
+    deleteUpload(req, id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.uploadsService.deleteUpload(id, req.user.userId);
         });
     }
 };
@@ -100,6 +121,25 @@ __decorate([
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], UploadsController.prototype, "getUploadsByUser", null);
+__decorate([
+    (0, common_1.Put)(':id'),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', { dest: './uploads' })),
+    __param(0, (0, common_1.UploadedFile)()),
+    __param(1, (0, common_1.Req)()),
+    __param(2, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(3, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object, Number, Object]),
+    __metadata("design:returntype", Promise)
+], UploadsController.prototype, "updateUpload", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Number]),
+    __metadata("design:returntype", Promise)
+], UploadsController.prototype, "deleteUpload", null);
 exports.UploadsController = UploadsController = __decorate([
     (0, common_1.Controller)('uploads'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),

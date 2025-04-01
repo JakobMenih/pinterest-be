@@ -31,7 +31,7 @@ let PinsController = class PinsController {
     }
     createPin(req, body) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.pinsService.createPin(body.title, body.imageUrl, req.user.userId);
+            return this.pinsService.createPin(body.title, body.description, body.imageUrl, req.user.userId);
         });
     }
     getAllPins() {
@@ -47,6 +47,16 @@ let PinsController = class PinsController {
     getPinsByUser(userId) {
         return __awaiter(this, void 0, void 0, function* () {
             return this.pinsService.findByUser(userId);
+        });
+    }
+    updatePin(req, id, updateData) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.pinsService.updatePin(id, updateData, req.user.userId);
+        });
+    }
+    deletePin(req, id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.pinsService.deletePin(id, req.user.userId);
         });
     }
 };
@@ -80,6 +90,25 @@ __decorate([
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], PinsController.prototype, "getPinsByUser", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Put)(':id'),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Number, Object]),
+    __metadata("design:returntype", Promise)
+], PinsController.prototype, "updatePin", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Delete)(':id'),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Number]),
+    __metadata("design:returntype", Promise)
+], PinsController.prototype, "deletePin", null);
 exports.PinsController = PinsController = __decorate([
     (0, common_1.Controller)('pins'),
     __metadata("design:paramtypes", [pins_service_1.PinsService])

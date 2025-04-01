@@ -32,7 +32,7 @@ let AuthController = class AuthController {
     }
     register(body) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.usersService.createUser(body.email, body.password);
+            return this.usersService.createUser(body.email, body.username, body.password);
         });
     }
     login(body) {

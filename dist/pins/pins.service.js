@@ -30,9 +30,9 @@ let PinsService = class PinsService {
     constructor(pinRepository) {
         this.pinRepository = pinRepository;
     }
-    createPin(title, imageUrl, userId) {
+    createPin(title, description, imageUrl, userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const pin = this.pinRepository.create({ title, imageUrl, user: { id: userId } });
+            const pin = this.pinRepository.create({ title, description, imageUrl, user: { id: userId } });
             return yield this.pinRepository.save(pin);
         });
     }
@@ -43,15 +43,47 @@ let PinsService = class PinsService {
     }
     getPinById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.pinRepository.findOne({ where: { id } });
+            const pin = yield this.pinRepository.findOne({ where: { id }, relations: ['user'] });
+            if (!pin) {
+                throw new common_1.NotFoundException('Pin not found');
+            }
+            return pin;
         });
     }
     findByUser(userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.pinRepository.find({
+            return yield this.pinRepository.find({
                 where: { user: { id: userId } },
                 relations: ['user'],
             });
+        });
+    }
+    updatePin(id, updateData, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const pin = yield this.getPinById(id);
+            if (pin.user.id !== userId) {
+                throw new common_1.UnauthorizedException('You are not allowed to update this pin');
+            }
+            if (updateData.title !== undefined) {
+                pin.title = updateData.title;
+            }
+            if (updateData.description !== undefined) {
+                pin.description = updateData.description;
+            }
+            if (updateData.imageUrl !== undefined) {
+                pin.imageUrl = updateData.imageUrl;
+            }
+            return yield this.pinRepository.save(pin);
+        });
+    }
+    deletePin(id, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const pin = yield this.getPinById(id);
+            if (pin.user.id !== userId) {
+                throw new common_1.UnauthorizedException('You are not allowed to delete this pin');
+            }
+            yield this.pinRepository.delete(id);
+            return { message: 'Pin deleted successfully' };
         });
     }
 };

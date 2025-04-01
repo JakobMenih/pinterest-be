@@ -20,6 +20,10 @@ __decorate([
     __metadata("design:type", Number)
 ], Upload.prototype, "id", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ default: 'Untitled Upload' }),
+    __metadata("design:type", String)
+], Upload.prototype, "title", void 0);
+__decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], Upload.prototype, "filename", void 0);

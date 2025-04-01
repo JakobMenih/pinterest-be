@@ -69,11 +69,49 @@ let UsersService = class UsersService {
             return yield this.usersRepository.findOne({ where: { email } });
         });
     }
-    createUser(email, password) {
+    createUser(email, username, password) {
         return __awaiter(this, void 0, void 0, function* () {
             const hashedPassword = yield bcrypt.hash(password, 10);
-            const user = this.usersRepository.create({ email, password: hashedPassword });
+            const user = this.usersRepository.create({ email, username, password: hashedPassword });
             return yield this.usersRepository.save(user);
+        });
+    }
+    getAllUsers() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.usersRepository.find();
+        });
+    }
+    getUserById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield this.usersRepository.findOne({ where: { id } });
+            if (!user) {
+                throw new common_1.NotFoundException('User not found');
+            }
+            return user;
+        });
+    }
+    updateUser(id, updateData) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield this.getUserById(id);
+            if (updateData.email !== undefined) {
+                user.email = updateData.email;
+            }
+            if (updateData.username !== undefined) {
+                user.username = updateData.username;
+            }
+            if (updateData.password !== undefined) {
+                user.password = yield bcrypt.hash(updateData.password, 10);
+            }
+            return yield this.usersRepository.save(user);
+        });
+    }
+    deleteUser(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield this.usersRepository.delete(id);
+            if (result.affected === 0) {
+                throw new common_1.NotFoundException('User not found');
+            }
+            return { message: 'User deleted successfully' };
         });
     }
 };

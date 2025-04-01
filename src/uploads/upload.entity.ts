@@ -6,6 +6,9 @@ export class Upload {
     @PrimaryGeneratedColumn()
     id: number;
 
+    @Column({ default: 'Untitled Upload' })
+    title: string;
+
     @Column()
     filename: string;
 

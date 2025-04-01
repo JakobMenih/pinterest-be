@@ -35,14 +35,14 @@ let UploadsService = class UploadsService {
         this.usersRepository = usersRepository;
         this.storageConfig = {
             storage: (0, multer_1.diskStorage)({
-                destination: './uploads', // ✅ Ensure the uploads folder exists
+                destination: './uploads', // Ensure the uploads folder exists
                 filename: (req, file, callback) => {
                     if (!file.originalname) {
                         return callback(new Error('File must have an original name'), '');
                     }
                     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
                     const filename = uniqueSuffix + (0, path_1.extname)(file.originalname);
-                    console.log("Generated filename:", filename); // ✅ Debugging
+                    console.log('Generated filename:', filename);
                     callback(null, filename);
                 },
             }),
@@ -52,30 +52,66 @@ let UploadsService = class UploadsService {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield this.usersRepository.findOne({ where: { id: uploadData.userId } });
             if (!user) {
-                throw new Error(`User with ID ${uploadData.userId} not found`);
+                throw new common_1.NotFoundException(`User with ID ${uploadData.userId} not found`);
             }
             const upload = this.uploadsRepo.create({
+                title: uploadData.title,
                 filename: uploadData.filename,
                 mimetype: uploadData.mimetype,
                 size: uploadData.size,
                 user,
             });
-            return this.uploadsRepo.save(upload);
+            return yield this.uploadsRepo.save(upload);
         });
     }
     findAll() {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.uploadsRepo.find();
+            return yield this.uploadsRepo.find({ relations: ['user'] });
         });
     }
     findById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.uploadsRepo.findOne({ where: { id } });
+            const upload = yield this.uploadsRepo.findOne({ where: { id }, relations: ['user'] });
+            if (!upload) {
+                throw new common_1.NotFoundException('Upload not found');
+            }
+            return upload;
         });
     }
     findByUser(userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.uploadsRepo.find({ where: { user: { id: userId } } });
+            return yield this.uploadsRepo.find({ where: { user: { id: userId } }, relations: ['user'] });
+        });
+    }
+    updateUpload(id, updateData, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const upload = yield this.findById(id);
+            if (upload.user.id !== userId) {
+                throw new common_1.UnauthorizedException('You are not allowed to update this upload');
+            }
+            if (updateData.title !== undefined) {
+                upload.title = updateData.title;
+            }
+            if (updateData.filename !== undefined) {
+                upload.filename = updateData.filename;
+            }
+            if (updateData.mimetype !== undefined) {
+                upload.mimetype = updateData.mimetype;
+            }
+            if (updateData.size !== undefined) {
+                upload.size = updateData.size;
+            }
+            return yield this.uploadsRepo.save(upload);
+        });
+    }
+    deleteUpload(id, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const upload = yield this.findById(id);
+            if (upload.user.id !== userId) {
+                throw new common_1.UnauthorizedException('You are not allowed to delete this upload');
+            }
+            yield this.uploadsRepo.delete(id);
+            return { message: 'Upload deleted successfully' };
         });
     }
 };

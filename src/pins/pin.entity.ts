@@ -9,10 +9,12 @@ export class Pin {
     @Column()
     title!: string;
 
-    @Column()
-    imageUrl!: string;
+    @Column({ nullable: true })
+    description?: string;
+
+    @Column({ nullable: true })
+    imageUrl?: string;
 
     @ManyToOne(() => User, (user) => user.pins, { onDelete: 'CASCADE' })
     user!: User;
-
 }

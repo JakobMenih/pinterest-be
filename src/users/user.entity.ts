@@ -1,7 +1,6 @@
-import {Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany } from 'typeorm';
 import { Pin } from '../pins/pin.entity';
-import {Upload} from "../uploads/upload.entity";
-
+import { Upload } from '../uploads/upload.entity';
 
 @Entity()
 export class User {
@@ -10,6 +9,9 @@ export class User {
 
     @Column({ unique: true })
     email: string;
+
+    @Column({ unique: true })
+    username: string;
 
     @Column()
     password: string;
