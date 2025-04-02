@@ -62,6 +62,7 @@ export class PinsService {
 
     async deletePin(id: number, userId: number) {
         const pin = await this.getPinById(id);
+
         if (pin.user.id !== userId) {
             throw new UnauthorizedException('You are not allowed to delete this pin');
         }

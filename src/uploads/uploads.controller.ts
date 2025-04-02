@@ -1,3 +1,4 @@
+// uploads.controller.ts
 import {
     Controller,
     Post,
@@ -22,11 +23,11 @@ interface AuthRequest extends Request {
 }
 
 @Controller('uploads')
-@UseGuards(AuthGuard('jwt'))
 export class UploadsController {
     constructor(private uploadsService: UploadsService) {}
 
     @Post()
+    @UseGuards(AuthGuard('jwt'))
     @UseInterceptors(FileInterceptor('file', { dest: './uploads' }))
     async uploadFile(
         @UploadedFile() file: Express.Multer.File,
@@ -59,6 +60,7 @@ export class UploadsController {
         };
     }
 
+    // Public endpoint: GET uploads even for logged-out users
     @Get()
     async getAllUploads() {
         return this.uploadsService.findAll();
@@ -75,6 +77,7 @@ export class UploadsController {
     }
 
     @Put(':id')
+    @UseGuards(AuthGuard('jwt'))
     @UseInterceptors(FileInterceptor('file', { dest: './uploads' }))
     async updateUpload(
         @UploadedFile() file: Express.Multer.File,
@@ -91,6 +94,7 @@ export class UploadsController {
     }
 
     @Delete(':id')
+    @UseGuards(AuthGuard('jwt'))
     async deleteUpload(
         @Req() req: AuthRequest,
         @Param('id', ParseIntPipe) id: number,

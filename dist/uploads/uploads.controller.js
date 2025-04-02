@@ -22,6 +22,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UploadsController = void 0;
+// uploads.controller.ts
 const common_1 = require("@nestjs/common");
 const platform_express_1 = require("@nestjs/platform-express");
 const uploads_service_1 = require("./uploads.service");
@@ -60,6 +61,7 @@ let UploadsController = class UploadsController {
             };
         });
     }
+    // Public endpoint: GET uploads even for logged-out users
     getAllUploads() {
         return __awaiter(this, void 0, void 0, function* () {
             return this.uploadsService.findAll();
@@ -94,6 +96,7 @@ let UploadsController = class UploadsController {
 exports.UploadsController = UploadsController;
 __decorate([
     (0, common_1.Post)(),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', { dest: './uploads' })),
     __param(0, (0, common_1.UploadedFile)()),
     __param(1, (0, common_1.Req)()),
@@ -123,6 +126,7 @@ __decorate([
 ], UploadsController.prototype, "getUploadsByUser", null);
 __decorate([
     (0, common_1.Put)(':id'),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', { dest: './uploads' })),
     __param(0, (0, common_1.UploadedFile)()),
     __param(1, (0, common_1.Req)()),
@@ -134,6 +138,7 @@ __decorate([
 ], UploadsController.prototype, "updateUpload", null);
 __decorate([
     (0, common_1.Delete)(':id'),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
@@ -142,6 +147,5 @@ __decorate([
 ], UploadsController.prototype, "deleteUpload", null);
 exports.UploadsController = UploadsController = __decorate([
     (0, common_1.Controller)('uploads'),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     __metadata("design:paramtypes", [uploads_service_1.UploadsService])
 ], UploadsController);

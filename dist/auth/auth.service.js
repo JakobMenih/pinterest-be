@@ -72,13 +72,19 @@ let AuthService = class AuthService {
     }
     login(user) {
         return __awaiter(this, void 0, void 0, function* () {
-            const payload = { email: user.email, sub: user.id };
-            return { access_token: this.jwtService.sign(payload) };
+            const payload = {
+                id: user.id,
+                email: user.email,
+                username: user.username,
+            };
+            const token = this.jwtService.sign(payload);
+            return { access_token: token };
         });
     }
 };
 exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [users_service_1.UsersService, jwt_1.JwtService])
+    __metadata("design:paramtypes", [users_service_1.UsersService,
+        jwt_1.JwtService])
 ], AuthService);

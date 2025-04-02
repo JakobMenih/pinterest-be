@@ -33,7 +33,11 @@ let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(pas
     }
     validate(payload) {
         return __awaiter(this, void 0, void 0, function* () {
-            return { userId: payload.sub, email: payload.email };
+            return {
+                userId: payload.id,
+                email: payload.email,
+                username: payload.username,
+            };
         });
     }
 };
